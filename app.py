@@ -26,19 +26,19 @@ def owe(s: str, testing=False) -> bool:
                 mode="w+",
             )
         for line in rledger:
-            creditor, amtOwed = line.lower().strip().split(": ")
+            creditor, prevDebt = line.lower().strip().split(": ")
             # Check if the reciever owes the sender money.
             if creditor == sender:
-                if amt <= amtOwed:
-                    amtOwed -= amt
+                if amt <= prevDebt:
+                    prevDebt -= amt
                     amt = 0
-                elif amt > amtOwed:
-                    amtOwed = 0
-                    amt -= amtOwed
+                elif amt > prevDebt:
+                    prevDebt = 0
+                    amt -= prevDebt
 
                 willBreak = True
 
-                rledger.write("{}: {}".format(creditor, amtOwed))
+                rledger.write("{}: {}".format(creditor, prevDebt))
                 break
         rledger.close()
 
@@ -52,11 +52,11 @@ def owe(s: str, testing=False) -> bool:
             )
 
             for line in sledger:
-                creditor, amtOwed = line.lower().strip().split(": ")
+                creditor, prevDebt = line.lower().strip().split(": ")
 
                 if creditor == receiver:
-                    amtOwed += amt
-                    sledger.write("{}: {}".format(creditor, amtOwed))
+                    prevDebt += amt
+                    sledger.write("{}: {}".format(creditor, prevDebt))
                     break
 
             sledger.close()
